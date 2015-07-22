@@ -1,18 +1,30 @@
 #!/usr/bin/perl -w
 #
-# dyndaemon.pl
+# dyndaemon.pl v1.2
 #
 # Martino Dell'Ambrogio <tillo@httpdnet.com>, 2006, GPLv2
 
-use Getopt::Std;
+use Getopt::Long;
 use Tie::File;
 
 %options=();
-getopts("i:d:n",\%options);
+$options{i} = '';
+$options{d} = '';
+$options{n} = '';
+$options{h} = '';
 
-$IFACE=$options{i} or $IFACE="ppp0";
-$DEBUG=$options{d} or $DEBUG="0";
-$DONTDOANYTHING=1 if defined $options{n};
+GetOptions('i|iface=s' => \$options{i}, 'd|debug=i' => \$options{d}, 'n|donothing' => \$options{n}, 'h|help' => \$options{h});
+
+$IFACE=$options{i} if $options{i} or $IFACE="ppp0";
+$DEBUG=$options{d} if $options{d} or $DEBUG="0";
+$DONTDOANYTHING=1 if $options{n};
+
+print "Arguments are:
+
+        -i, --iface IF          It makes dyndaemon look for the first v4 address of interface IF instead of ppp0
+        -n, --donothing         It makes dyndaemon not to write to files nor execute commands
+        -d, --debug NUM         It makes dyndaemon output debug messages. NUM can be 1, 2 or 3
+        -h, --help              It makes dyndaemon output a little help message about arguments\n" and exit(0) if $options{h};
 
 $CHKHIDDENFIELDSEPARATOR = '#';
 

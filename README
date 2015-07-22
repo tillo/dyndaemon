@@ -1,4 +1,4 @@
-dyndaemon
+dyndaemon v1.2
 
 dyndaemon is a little piece of software I wrote to reconfigure and restart
 daemons when the external IP changes.
@@ -8,9 +8,10 @@ Config file "dyndaemon.conf" must be in /etc, /usr/local/etc or in the same dire
 
 Arguments are:
 
-	-i IF	It makes dyndaemon look for the first v4 address of IF instead of ppp0
-	-n	It makes dyndaemon not to write to files nor execute commands
-	-d NUM	It makes dyndaemon output debug messages. NUM can be 1, 2 or 3
+	-i, --iface IF		It makes dyndaemon look for the first v4 address of interface IF instead of ppp0
+	-n, --donothing		It makes dyndaemon not to write to files nor execute commands
+	-d, --debug NUM		It makes dyndaemon output debug messages. NUM can be 1, 2 or 3
+	-h, --help		It makes dyndaemon output a little help message about arguments
 
 Enjoy
 
