@@ -4,20 +4,24 @@
 #
 # Martino Dell'Ambrogio <tillo@httpdnet.com>, 2006, GPLv2
 
+use strict;
+
 use Getopt::Long;
 use Tie::File;
 
 # Options initialisation
-%options=();
-$options{i} = $options{d} = $options{n} = $options{h} = '';
+my %options=();
+$options{i}=$options{d}=$options{n}=$options{h}='';
 
 # Long and short options' descriptions
 GetOptions('i|iface=s' => \$options{i}, 'd|debug=i' => \$options{d}, 'n|donothing' => \$options{n}, 'h|help' => \$options{h});
 
 # Default or given options
-$IFACE=$options{i} if $options{i} or $IFACE="ppp0";
-$DEBUG=$options{d} if $options{d} or $DEBUG="0";
-$DONTDOANYTHING=1 if $options{n};
+my $IFACE='ppp0';
+$IFACE=$options{i} if $options{i};
+my $DEBUG='0';
+$DEBUG=$options{d} if $options{d};
+my $DONTDOANYTHING=1 if $options{n};
 
 # Print help if option
 print "Arguments are:
@@ -28,9 +32,10 @@ print "Arguments are:
         -h, --help              It makes dyndaemon output a little help message about arguments\n" and exit(0) if $options{h};
 
 # chk's fourth hidden field separator
-$CHKHIDDENFIELDSEPARATOR = '#';
+my $CHKHIDDENFIELDSEPARATOR='#';
 
 # Search the config file
+my $CONFFILE='';
 ( open(CONFHANDLE, "/etc/dyndaemon.conf") and $CONFFILE = "/etc/dyndaemon.conf" )
 or
 ( open(CONFHANDLE, "/usr/local/etc/dyndaemon.conf") and $CONFFILE = "/usr/local/etc/dyndaemon.conf" )
@@ -39,16 +44,17 @@ or
 or
 ( open(CONFHANDLE, `dirname $0 |tr -d '\n'`."/dyndaemon.conf") and $CONFFILE = `dirname $0 |tr -d '\n'`."/dyndaemon.conf" )
 or
-die "Can't open config file!";
+die "Can't open config file! $!";
 
 print "[D2] Found config file ($CONFFILE)\n" if $DEBUG>=2;
 
 # Config parser initialisations
-$BLOCK=0;
-$SUCCESS=0;
+my $BLOCK=0;
+my $SUCCESS=0;
 
 # IP address is taken from ifconfig's output and translated ('.' escaped) to be parsed with RegExp
-$NEWIPP=$NEWIP=`/sbin/ifconfig $IFACE | grep 'inet ' | head -n 1 | awk '{print \$2}' | sed 's/addr://g' | tr -d '\n'` or die "Can't find interface \"".$IFACE."\".\n";
+my $NEWIP=`/sbin/ifconfig $IFACE | grep 'inet ' | head -n 1 | awk '{print \$2}' | sed 's/addr://g' | tr -d '\n'` or die "Can't find an address on interface \"".$IFACE."\". $!";
+my $NEWIPP=$NEWIP;
 $NEWIPP=~s/\./\\\./g;
 
 print "[D1] New IP is \"".$NEWIP."\".\n" if $DEBUG>=1;
@@ -83,19 +89,19 @@ while(<CONFHANDLE>) {
   elsif ($_ =~ /^chk (.+?) (.+)$/ && $BLOCK == 1) {
 
     # Parameters initialisation
-    $FILENAME=$1;
-    $STRING=$2;
+    my $FILENAME=$1;
+    my $STRING=$2;
+    my $STRINGP=$2;
+    my $STRINGPO=$2;
+    my $STRINGS=$2;
     print "[D1] Checking \"".$FILENAME."\" for string \"".$STRING."\".\n" if $DEBUG>=1;
 
     # If we have the fourth hidden field separator we split the tirdh field there
-    if ($2 =~ /^(.+)$CHKHIDDENFIELDSEPARATOR(.+)$/) {
+    if ($STRING =~ /^(.+)$CHKHIDDENFIELDSEPARATOR(.+)$/) {
       print "[D3] chk's tirdh hidden field encountered.\n" if $DEBUG>=3;
-      $STRINGPO=$STRINGP=$1;
+      $STRINGP=$1;
+      $STRINGPO=$1;
       $STRINGS=$2;
-    }
-    # We make sure that the separator is not there
-    elsif ($2 =~ /^([^$CHKHIDDENFIELDSEPARATOR]+)$/) {
-      $STRINGPO=$STRINGS=$STRINGP=$1;
     }
 
     # Initialisation of the 'line + anything that seems to be an address' to be parsed by RegExp
@@ -107,11 +113,12 @@ while(<CONFHANDLE>) {
     print "[D3] Substitute is \"".$STRINGS."\".\n" if $DEBUG>=3;
 
     # We open the file with Tie::File, the one real 'line parsed per line' perl module
-    tie @filelines, 'Tie::File', $FILENAME or die "Can't open file! ($FILENAME)";
+    my @filelines=();
+    tie @filelines, 'Tie::File', $FILENAME or warn "Can't open file! ($FILENAME) $!";
     print "[D2] File opened.\n" if $DEBUG>=2;
 
     # We look at every line of the perviously opened file
-    $i=1;
+    my $i=1;
     for(@filelines) {
       
       # We don't want newline char
@@ -128,7 +135,7 @@ while(<CONFHANDLE>) {
 
         # Execution of the RegExp
         $_=~/$STRINGPO/;
-        $OLDIP=$1;
+        my $OLDIP=$1;
 
         # If we already have the new address, nothing is to do
         if ($OLDIP eq $NEWIP) {
@@ -169,4 +176,4 @@ while(<CONFHANDLE>) {
 # Closing the config file
 close(CONFHANDLE);
 
-exit 0;
+0;
