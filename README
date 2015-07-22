@@ -17,13 +17,16 @@ interfaces will be used by jails/virtual machines/other daemons.
 Config file "dyndaemon.conf" must be in /etc, /usr/local/etc or in the same directory of
 "dyndaemon.pl". See "dyndaemon.conf.example" for help on configuring dyndaemon.
 
-Arguments are:
+Options are:
 
-	-i, --iface IF		It makes dyndaemon look for the first v4 address of interface IF instead of ppp0
-	-n, --donothing		It makes dyndaemon not to write to files nor execute commands
-	-d, --debug NUM		It makes dyndaemon output debug messages. NUM can be 1, 2 or 3
-	-h, --help		It makes dyndaemon output a little help message about arguments
+        -i, --iface IF          look for the first v4 address of interface IF instead of ppp0
+        -p, --pretend           don't write to files nor execute commands
+        -c, --nocolor           don't colorize output
+        -d, --debug NUM         output debug messages. NUM can be 1, 2 or 3
+        -h, --help              output this little help message about options
 
 Enjoy
+
+$Id: README,v 1.7 2006/08/29 21:46:45 tillo Exp $
 
 Martino Dell'Ambrogio <tillo@httpdnet.com>, 2006, GPLv2

@@ -36,6 +36,8 @@
 # Of course since this hack uses the symbol '#' you will not able to search or write a line containing this character.
 # See dyndaemon.pl to eventually change the character.
 #
+# $Id: dyndaemon.conf.example,v 1.6 2006/08/22 18:27:34 tillo Exp $
+#
 # Martino Dell'Ambrogio <tillo@httpdnet.com>, 2006, GPLv2
 
 BEGIN
