@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-# dyndaemon.pl v1.2
+# dyndaemon.pl
 #
 # Martino Dell'Ambrogio <tillo@httpdnet.com>, 2006, GPLv2
 
@@ -8,10 +8,7 @@ use Getopt::Long;
 use Tie::File;
 
 %options=();
-$options{i} = '';
-$options{d} = '';
-$options{n} = '';
-$options{h} = '';
+$options{i} = $options{d} = $options{n} = $options{h} = '';
 
 GetOptions('i|iface=s' => \$options{i}, 'd|debug=i' => \$options{d}, 'n|donothing' => \$options{n}, 'h|help' => \$options{h});
 
@@ -133,4 +130,3 @@ while(<CONFHANDLE>) {
 close(CONFHANDLE);
 
 exit 0;
-

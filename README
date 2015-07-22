@@ -1,7 +1,18 @@
-dyndaemon v1.2
+dyndaemon
 
 dyndaemon is a little piece of software I wrote to reconfigure and restart
 daemons when the external IP changes.
+
+It should be runned from command line or by cron/schedule.
+
+It takes the actual IP address from the external interface and checks,
+following his config file, that a list of daemons' config files are
+correctly configured with that address to listen to.
+If the address is not the good one, it changes it and restarts every daemon.
+
+It is really useful when a system has multiple interfaces and a list of
+daemons have to listen to one DHCP-configured interface; the other
+interfaces will be used by jails/virtual machines/other daemons.
 
 Config file "dyndaemon.conf" must be in /etc, /usr/local/etc or in the same directory of
 "dyndaemon.pl". See "dyndaemon.conf.example" for help on configuring dyndaemon.
