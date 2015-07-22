@@ -1,4 +1,4 @@
-dyndaemon v1.0
+dyndaemon
 
 dyndaemon is a little piece of software I wrote to reconfigure and restart
 daemons when the external IP changes.

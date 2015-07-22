@@ -1,4 +1,4 @@
-# dyndaemon.conf v1.0
+# dyndaemon.conf
 #
 # Configuration file for dyndaemon.
 #
@@ -19,9 +19,22 @@
 # the second config file, finally it will restart the daemon.
 # The daemon will not be restarted if <old address> is equal to <new address> in ALL of the config files.
 #
-# WARNING:
-# The 3th argument of the check command is parsed as a REGEXP.
-# This means that if, for example, you want to look for a '$' you must write '\$'.
+# WARNING WARNING WARNING:
+# The 3th argument of the check command is parsed as a RegExp.
+# This means that if, for example, you want to look for a '$' you must write '\$', same thing with '\[something\]' and '\{something\}'.
+# More of that, if you wrote a string that is not exactly what you want to be written, you will have to
+# use a fourth hidden field (preceded by a '#' symbol) to specify what to write.
+#
+# Example:
+#
+# chk /etc/daemon.conf \$bind\[1\] = '{}';#$bind[1] = '{}';
+#
+# This will correctly overwrite the value of variable $bind[1].
+# The fourth check field is only necessary if an escape character or a RegExp command is used.
+# You can easely check if you need this hack when you think 'do what I search is what I want to write?'.
+#
+# Of course since this hack uses the symbol '#' you will not able to search or write a line containing this character.
+# See dyndaemon.pl to eventually change the character.
 #
 # Martino Dell'Ambrogio <tillo@httpdnet.com>, 2006, GPLv2
 
@@ -68,12 +81,13 @@ chk /usr/local/etc/courier-imap/imapd-ssl SSLADDRESS={}
 exe /usr/local/etc/rc.d/courier-imap-imapd-ssl.sh restart
 END
 
+
 BEGIN
 chk /usr/local/etc/rsyncd.conf address = {}
 exe /usr/local/etc/rc.d/rsyncd restart
 END
 
 BEGIN
-chk /home/squirrelmail/www/config/config.php \$imapServerAddress = '{}';
-chk /home/squirrelmail/www/config/config.php \$smtpServerAddress = '{}';
+chk /home/squirrelmail/www/config/config.php \$imapServerAddress = '{}';#$imapServerAddress = '{}';
+chk /home/squirrelmail/www/config/config.php \$smtpServerAddress = '{}';#$smtpServerAddress = '{}';
 END
