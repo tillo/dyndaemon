@@ -1,0 +1,17 @@
+dyndaemon v1.0
+
+dyndaemon is a little piece of software I wrote to reconfigure and restart
+daemons when the external IP changes.
+
+Config file "dyndaemon.conf" must be in /etc, /usr/local/etc or in the same directory of
+"dyndaemon.pl". See "dyndaemon.conf.example" for help on configuring dyndaemon.
+
+Arguments are:
+
+	-i IF	It makes dyndaemon look for the first v4 address of IF instead of ppp0
+	-n	It makes dyndaemon not to write to files nor execute commands
+	-d NUM	It makes dyndaemon output debug messages. NUM can be 1, 2 or 3
+
+Enjoy
+
+Martino Dell'Ambrogio <tillo@httpdnet.com>, 2006, GPLv2

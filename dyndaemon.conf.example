@@ -1,0 +1,79 @@
+# dyndaemon.conf v1.0
+#
+# Configuration file for dyndaemon.
+#
+# There are two types of command lines: check and execute.
+# Commands must be written between BEGIN and END lines.
+# Execute commands are runned only if at least one of the check commands in the same block is executed successfully.
+#
+# Example:
+#
+# BEGIN
+# chk /etc/daemon.conf bind = {};
+# chk /etc/daemon-too.conf addr={}:1234;
+# exe /etc/init.d/daemon.sh restart
+# END
+#
+# This will overwrite every line containing "bind = <old address>;" (and ONLY that)
+# with the line "bind = <new address>;", then it will do the same thing for
+# the second config file, finally it will restart the daemon.
+# The daemon will not be restarted if <old address> is equal to <new address> in ALL of the config files.
+#
+# WARNING:
+# The 3th argument of the check command is parsed as a REGEXP.
+# This means that if, for example, you want to look for a '$' you must write '\$'.
+#
+# Martino Dell'Ambrogio <tillo@httpdnet.com>, 2006, GPLv2
+
+BEGIN
+chk /etc/ssh/sshd_config ListenAddress {}
+exe /etc/rc.d/sshd restart
+END
+
+BEGIN
+chk /usr/local/etc/apache/httpd.conf Listen {}:80
+chk /usr/local/etc/apache/httpd.conf Listen {}:443
+chk /usr/local/etc/apache/httpd.conf NameVirtualHost {}:80
+chk /usr/local/etc/apache/httpd.conf NameVirtualHost {}:443
+chk /usr/local/etc/apache/httpd.conf <VirtualHost {}:80>
+chk /usr/local/etc/apache/httpd.conf <VirtualHost {}:443>
+exe /usr/local/etc/rc.d/zapache.sh restart
+END
+
+BEGIN
+chk /home/ircd/Unreal3.2/unrealircd.conf listen {}:6669
+chk /home/ircd/Unreal3.2/unrealircd.conf listen {}:6660-6668
+chk /home/ircd/Unreal3.2/unrealircd.conf listen {}:7000;
+chk /home/ircd/Unreal3.2/unrealircd.conf bind-ip {};
+exe sudo -u ircd /home/ircd/Unreal3.2/unreal restart
+END
+
+BEGIN
+chk /usr/local/etc/webmin/miniserv.conf bind={}
+exe /usr/local/etc/rc.d/webmin restart
+END
+
+BEGIN
+chk /usr/local/etc/rc.d/ucspi.sh BINDADDR={}
+exe /usr/local/etc/rc.d/ucspi.sh restart
+END
+
+BEGIN
+chk /usr/local/etc/courier-imap/imapd ADDRESS={}
+exe /usr/local/etc/rc.d/courier-imap-imapd.sh restart
+END
+
+BEGIN
+chk /usr/local/etc/courier-imap/imapd-ssl SSLADDRESS={}
+exe /usr/local/etc/rc.d/courier-imap-imapd-ssl.sh restart
+END
+
+BEGIN
+chk /usr/local/etc/rsyncd.conf address = {}
+exe /usr/local/etc/rc.d/rsyncd restart
+END
+
+BEGIN
+chk /home/squirrelmail/www/config/config.php \$imapServerAddress = '{}';
+chk /home/squirrelmail/www/config/config.php \$smtpServerAddress = '{}';
+END
